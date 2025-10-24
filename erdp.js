@@ -223,7 +223,7 @@ function erdp_create(erd, erdv)
         file_handle = file;
 
         objects_selected = [];
-        selection_rectangle = null;select_object
+        selection_rectangle = null;
 
         erd = JSON.parse(await (await file_handle.getFile()).text());
 

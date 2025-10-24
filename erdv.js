@@ -673,7 +673,9 @@ function erdv_init(erd) {
     });
 
     erd_canvas.addEventListener('mousedown', ev => {
-        erdv['on_canvas_mouse_down'](ev.offsetX, ev.offsetY);
+        if (ev.button == 0) {
+            erdv['on_canvas_mouse_down'](ev.offsetX, ev.offsetY);
+        }
     });
 
     erd_canvas.addEventListener('mousemove', ev => {
