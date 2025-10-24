@@ -46,6 +46,11 @@ function erdv_init(erd) {
     function clear()
     {
         erd_canvas_ctx.clearRect(0, 0, erd_canvas.width, erd_canvas.height);
+
+        let origFillStyle = erd_canvas_ctx.fillStyle;
+        erd_canvas_ctx.fillStyle = "white";
+        erd_canvas_ctx.fillRect(0, 0, erd_canvas.width, erd_canvas.height);
+        erd_canvas_ctx.fillStyle = origFillStyle;
     }
 
     function change_canvas_size(size){
