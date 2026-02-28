@@ -209,6 +209,20 @@ function erdp_create(erd, erdv)
         update();
     }
 
+    erdv['on_value_set_remove'] = function(value_set_name)
+    {
+        erd_remove_value_set(erd, value_set_name);
+
+        update();
+    }
+
+    erdv['on_value_set_add'] = function(value_set)
+    {
+        erd_create_value_set(erd, value_set['name'], value_set['data_type']);
+
+        update();   
+    }
+
     erdv['on_save'] = async function () {
         if (file_handle == null)
         {

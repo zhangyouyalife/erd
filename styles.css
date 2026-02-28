@@ -107,3 +107,30 @@ body {
 .basic_property_table input {
     width: 100%;
 }
+
+.value-set-tab
+{
+    width: 100%;
+    table-layout: fixed; /* Ensures fixed column widths */
+    border-collapse: collapse;
+}
+
+.value-set-tab th
+{
+    border: 1px solid black;
+}
+
+.value-set-tab td
+{
+    border: 1px solid black;
+}
+
+.value-set-tab th:nth-child(1), .role_table td:nth-child(1) {
+    width: 12em;
+}
+
+.value-set-tab th:nth-child(3), .role_table td:nth-child(3) {
+    width: 1.8em;
+    text-align: center;
+}
+

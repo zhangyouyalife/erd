@@ -22,6 +22,7 @@ function erd_create()
         'relationship_set.height': erd_settings_default['relationship_set.height'],
         "entity_sets": [],
         "relationship_sets": [],
+        "value_sets": [],
     };
 }
 
@@ -33,6 +34,29 @@ function erd_create()
 function erd_generate_id()
 {
     return crypto.randomUUID();
+}
+
+function erd_create_value_set(erd, name, data_type)
+{
+    const e = {
+        name,
+        data_type,
+    };
+
+    erd['value_sets'].push(e);
+    return e;
+}
+
+function erd_remove_value_set(erd, name)
+{
+    for (let i = 0; i < erd["value_sets"].length; i++) {
+        const e = erd["value_sets"][i];
+        if (e['name'] == name)
+        {
+            erd["value_sets"].splice(i, 1)
+            break;
+        }
+    }
 }
 
 function erd_create_entity_set(erd, x = 0, y = 0)

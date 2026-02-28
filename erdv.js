@@ -23,6 +23,10 @@ function erdv_init(erd) {
         on_relationship_set_remove_role(relationship_set, role) { console.log("on_relationship_set_remove_role stub"); },
         async on_save() { console.log('on_save'); },
 
+        /* for value sets */
+        on_value_set_remove: function(value_name) { console.log('on_value_set_remove', value_name); },
+        on_value_set_add: function(value_set) { console.log('on_value_set_add', value_name); },
+
         on_settings_change: function(settings) { console.log('on_settings_change ', settings); },
 
         /* methods */
@@ -379,9 +383,83 @@ function erdv_init(erd) {
         _show_props(_create_erd_propertybox(erd));
     }
 
+    /************************************************************
+     * Value Set Section in ERD property box 
+     ************************************************************/
+    function _create_erd_prop_value_set_section(erd)
+    {
+        const section = document.createElement('section');
+
+        section.appendChild(_html('<h2>Value Set</h2>'));
+
+        const value_set_tab = _html('<table class="value-set-tab">\
+                <tr><th>Name</th><th>Data Type</th><th></th></tr>\
+            </table>');
+
+        
+        for (const v of erd['value_sets'])
+        {
+            const remove_button = document.createElement('button', {
+                'type': 'button'
+            });
+            remove_button.innerText = '-';
+            remove_button.addEventListener('click', e => {
+                erdv['on_value_set_remove'](v['name']);
+            });
+
+            value_set_tab.appendChild(
+                _tr(
+                    _td(_text(v['name'])),
+                    _td(_text(v['data_type'])),
+                    _td(remove_button)
+                )
+            );
+        }
+
+        /* last row */
+        const value_set_name = document.createElement('input', {
+            'type': 'text'
+        });
+        value_set_name.style.width = '100%';
+
+
+        const value_set_data_type = document.createElement('input', {
+            'type': 'text'
+        });
+        value_set_data_type.style.width = '100%';
+
+        const value_set_add_button = document.createElement('button', {
+            'type': 'button'
+        });
+        value_set_add_button.innerText = '+';
+        value_set_add_button.addEventListener('click', e => {
+            erdv['on_value_set_add']({
+                'name': value_set_name.value,
+                'data_type': value_set_data_type.value,
+            });
+        });
+        value_set_tab.appendChild(
+            _tr(
+                _td(value_set_name),
+                _td(value_set_data_type),
+                _td(value_set_add_button)
+            )
+        );
+
+        section.appendChild(value_set_tab);
+        
+        return section;
+    }
+
     function _create_erd_propertybox(erd)
     {
         const box = document.createElement('div');
+
+        box.appendChild(_html('<h1>Entity Relationship Model</h1>'));
+
+        box.appendChild(_create_erd_prop_value_set_section(erd));
+
+        box.appendChild(_html('<h1>Entity Relationship Diagram</h1>'));
 
         box.appendChild(_html('<h2>Entity Set</h2>'))
         const entity_set_props_tab = _html('<table class="basic_property_table"></table>');
@@ -463,11 +541,10 @@ function erdv_init(erd) {
     {
         const box = document.createElement('div');
 
-        const props_tab = _html('<table class="basic_property_table"></table>');
-        const props_tr = document.createElement('tr');
-        const props_name = document.createElement('th');
-        props_name.innerText = 'Name';
-        const props_value = document.createElement('td');
+        box.appendChild(_html('<h1>Entity Set</h1>'));
+
+        box.appendChild(_html('<h2>Name</h2>'));
+
         const props_name_input = document.createElement('input');
         props_name_input.style.width = '100%';
         props_name_input.value = e['name'];
@@ -476,11 +553,9 @@ function erdv_init(erd) {
                 name: props_name_input.value
             });
         });
-        props_value.appendChild(props_name_input);
-        props_tr.appendChild(props_name);
-        props_tr.appendChild(props_value);
-        props_tab.appendChild(props_tr);
-        box.appendChild(props_tab);
+        box.appendChild(props_name_input);
+
+        box.appendChild(_html('<h2>Attributes</h2>'))
 
         const button_container = _html('<div class="button-container"></div>')
         const remove_button = document.createElement('button')
