@@ -27,6 +27,13 @@ function erdv_init(erd) {
         on_value_set_remove: function(value_name) { console.log('on_value_set_remove', value_name); },
         on_value_set_add: function(value_set) { console.log('on_value_set_add', value_name); },
 
+        /* for entity sets */
+        on_entity_set_attribute_add: function(entity_set, attr) { console.log('on_entity_set_attribute_add', entity_set, attr); },
+        on_entity_set_attribute_remove: function(entity_set, name) { console.log('on_entity_set_attribute_add', entity_set, name); },
+        on_entity_set_attribute_set_pk_component: function(entity_set, attr_name, is_pk_component) {
+            console.log('on_entity_set_attribute_set_pk_component', entity_set, attr_name, is_pk_component);
+        },
+
         on_settings_change: function(settings) { console.log('on_settings_change ', settings); },
 
         /* methods */
@@ -368,9 +375,9 @@ function erdv_init(erd) {
         propertybox_container.style.visibility = 'visible';
     }
 
-    function show_entity_set_properties(e)
+    function show_entity_set_properties(e, erd)
     {
-        _show_props(create_entity_set_propertybox(e));
+        _show_props(create_entity_set_propertybox(e, erd));
     }
 
     function show_relationship_set_properties(relationship_set, entity_sets)
@@ -537,7 +544,10 @@ function erdv_init(erd) {
         return box;
     }
 
-    function create_entity_set_propertybox(e)
+    /************************************************************
+     * Entity Set property box 
+     ************************************************************/
+    function create_entity_set_propertybox(e, erd)
     {
         const box = document.createElement('div');
 
@@ -555,7 +565,7 @@ function erdv_init(erd) {
         });
         box.appendChild(props_name_input);
 
-        box.appendChild(_html('<h2>Attributes</h2>'))
+        box.appendChild(_create_entity_set_attributes_section(e, erd));
 
         const button_container = _html('<div class="button-container"></div>')
         const remove_button = document.createElement('button')
@@ -566,6 +576,88 @@ function erdv_init(erd) {
         box.appendChild(button_container)
 
         return box;
+    }
+
+    /* Entity Set attributes section */
+    function _create_entity_set_attributes_section(entity_set, erd)
+    {
+        const section = document.createElement('section');
+
+        section.appendChild(_html('<h2>Attributes</h2>'));
+
+        const attribute_tab = _html('<table class="attribute-tab">\
+                <tr><th>PK</th><th>Name</th><th>Value Set</th><th></th></tr>\
+            </table>');
+
+        
+        for (const v of entity_set['attributes'])
+        {
+            const pk_check_button = document.createElement('input');
+            pk_check_button.type = 'checkbox';
+            pk_check_button.checked = !!v['is_pk_component'];
+            pk_check_button.addEventListener('change', () => {
+                erdv['on_entity_set_attribute_set_pk_component'](entity_set, 
+                    v['name'], pk_check_button.checked);
+            })
+
+            const remove_button = document.createElement('button', {
+                'type': 'button'
+            });
+            remove_button.innerText = '-';
+            remove_button.addEventListener('click', e => {
+                erdv['on_entity_set_attribute_remove'](entity_set, v['name']);
+            });
+
+            attribute_tab.appendChild(
+                _tr(
+                    _td(pk_check_button),
+                    _td(_text(v['name'])),
+                    _td(_text(v['value_set'])),
+                    _td(remove_button)
+                )
+            );
+        }
+
+        /* last row */
+        const attribute_name = document.createElement('input', {
+            'type': 'text'
+        });
+        attribute_name.style.width = '100%';
+
+
+        const attribute_value_set = document.createElement('select');
+        for (const e of erd['value_sets'])
+        {
+            const value = e['name']
+            const name = e['name'];
+            attribute_value_set.appendChild(
+                _html(`<option value="${value}">${name}</option>`)
+            );
+        }
+        attribute_value_set.style.width = '100%';
+
+        const attribute_add_button = document.createElement('button', {
+            'type': 'button'
+        });
+        attribute_add_button.innerText = '+';
+        attribute_add_button.addEventListener('click', e => {
+            erdv['on_entity_set_attribute_add'](entity_set, {
+                'name': attribute_name.value,
+                'value_set': attribute_value_set.value,
+            });
+        });
+        attribute_tab.appendChild(
+            _tr(
+                _td(_text('')),
+                _td(attribute_name),
+                _td(attribute_value_set),
+                _td(attribute_add_button)
+            )
+        );
+
+        section.appendChild(attribute_tab);
+        
+        return section;
     }
 
     function _create_relationship_set_propertybox(relationship_set, entity_sets)

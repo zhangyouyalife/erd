@@ -70,6 +70,7 @@ function erd_create_entity_set(erd, x = 0, y = 0)
         "height": erd['entity_set.height'],
         "name": "Entity",
         "type": "entity_set",
+        "attributes": [],
     };
 
     erd['entity_sets'].push(e);
@@ -586,6 +587,38 @@ function _compute_role_anchors(relationship_set, entity_set)
             y: ea[1],
         },
     };
+}
+
+function erd_entity_set_add_attribute(erd, entity_set, attr, value_set)
+{
+    entity_set['attributes'].push({
+        'name': attr,
+        'value_set': value_set,
+    });
+}
+
+function erd_entity_set_remove_attribute(erd, entity_set, attr_name)
+{
+    for (let i = 0; i < entity_set["attributes"].length; i++) {
+        const e = entity_set["attributes"][i];
+        if (e['name'] == attr_name)
+        {
+            entity_set["attributes"].splice(i, 1)
+            break;
+        }
+    }
+}
+
+function erd_entity_set_attribute_set_pk_component(erd, entity_set, attr_name, is_pk_component)
+{
+    for (let i = 0; i < entity_set["attributes"].length; i++) {
+        const e = entity_set["attributes"][i];
+        if (e['name'] == attr_name)
+        {
+            e['is_pk_component'] = is_pk_component;
+            break;
+        }
+    }
 }
 
 function erd_relationship_set_add_role(erd, relationship_set, entity_set, role_name, role_multiplicity)

@@ -209,6 +209,25 @@ function erdp_create(erd, erdv)
         update();
     }
 
+    erdv['on_entity_set_attribute_add'] = function(entity_set, attr)
+    {
+        erd_entity_set_add_attribute(erd, entity_set, attr['name'], attr['value_set']);
+
+        update_property_box();
+    }
+
+    erdv['on_entity_set_attribute_remove'] = function(entity_set, attr_name)
+    {
+        erd_entity_set_remove_attribute(erd, entity_set, attr_name);
+
+        update_property_box();
+    }
+
+    erdv['on_entity_set_attribute_set_pk_component'] = function(entity_set, attr_name, is_pk_component)
+    {
+        erd_entity_set_attribute_set_pk_component(erd, entity_set, attr_name, is_pk_component);
+    }
+
     erdv['on_value_set_remove'] = function(value_set_name)
     {
         erd_remove_value_set(erd, value_set_name);
@@ -325,7 +344,7 @@ function erdp_create(erd, erdv)
     {
         if (obj['type'] == 'entity_set')
         {
-            erdv['show_entity_set_properties'](obj);
+            erdv['show_entity_set_properties'](obj, erd);
         }
         else if (obj['type'] == 'relationship_set')
         {

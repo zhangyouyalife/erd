@@ -134,3 +134,33 @@ body {
     text-align: center;
 }
 
+.attribute-tab
+{
+    width: 100%;
+    table-layout: fixed; /* Ensures fixed column widths */
+    border-collapse: collapse;
+}
+
+.attribute-tab th
+{
+    border: 1px solid black;
+}
+
+.attribute-tab td
+{
+    border: 1px solid black;
+}
+
+.attribute-tab th:nth-child(1), .role_table td:nth-child(1) {
+    width: 2em;
+    text-align: center;
+}
+
+.attribute-tab th:nth-child(2), .role_table td:nth-child(1) {
+    width: 12em;
+}
+
+.attribute-tab th:nth-child(4), .role_table td:nth-child(3) {
+    width: 1.8em;
+    text-align: center;
+}
