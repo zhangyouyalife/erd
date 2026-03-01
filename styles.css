@@ -73,11 +73,11 @@ body {
 }
 
 .role_table th:nth-child(1), .role_table td:nth-child(1) {
-    width: 10em;
+    width: 5em;
 }
 
 .role_table th:nth-child(2), .role_table td:nth-child(2) {
-    width: 5em;
+    width: 10em;
 }
 
 .role_table th:nth-child(3), .role_table td:nth-child(3) {
@@ -161,6 +161,32 @@ body {
 }
 
 .attribute-tab th:nth-child(4), .role_table td:nth-child(3) {
+    width: 1.8em;
+    text-align: center;
+}
+
+.relationship-attribute-tab
+{
+    width: 100%;
+    table-layout: fixed; /* Ensures fixed column widths */
+    border-collapse: collapse;
+}
+
+.relationship-attribute-tab th
+{
+    border: 1px solid black;
+}
+
+.relationship-attribute-tab td
+{
+    border: 1px solid black;
+}
+
+.relationship-attribute-tab th:nth-child(1), .role_table td:nth-child(1) {
+    width: 12em;
+}
+
+.relationship-attribute-tab th:nth-child(3), .role_table td:nth-child(3) {
     width: 1.8em;
     text-align: center;
 }

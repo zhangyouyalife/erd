@@ -21,6 +21,10 @@ function erdv_init(erd) {
         on_props_remove_button_click: function() { console.log('on_props_remove_button_click') },
         on_relationship_set_add_role(entity_set_id, role_name, role_multiplicity) {},
         on_relationship_set_remove_role(relationship_set, role) { console.log("on_relationship_set_remove_role stub"); },
+        on_relationship_set_attribute_add: function(relationship_set, attr) { console.log('on_relationship_set_attribute_add', relationship_set, attr); },
+        on_relationship_set_attribute_remove: function(relationship_set, name) { console.log('on_relationship_set_attribute_remove', relationship_set, name); },
+        
+        
         async on_save() { console.log('on_save'); },
 
         /* for value sets */
@@ -380,9 +384,9 @@ function erdv_init(erd) {
         _show_props(create_entity_set_propertybox(e, erd));
     }
 
-    function show_relationship_set_properties(relationship_set, entity_sets)
+    function show_relationship_set_properties(relationship_set, entity_sets, erd)
     {
-        _show_props(_create_relationship_set_propertybox(relationship_set, entity_sets));
+        _show_props(_create_relationship_set_propertybox(relationship_set, entity_sets, erd));
     }
 
     function show_erd_props(erd)
@@ -660,15 +664,16 @@ function erdv_init(erd) {
         return section;
     }
 
-    function _create_relationship_set_propertybox(relationship_set, entity_sets)
+    /************************************************************
+     * Relationship Set property box 
+     ************************************************************/
+    function _create_relationship_set_propertybox(relationship_set, entity_sets, erd)
     {
         const box = document.createElement('div');
 
-        const props_tab = _html('<table class="basic_property_table"></table>');
-        const props_tr = document.createElement('tr');
-        const props_name = document.createElement('th');
-        props_name.innerText = 'Name';
-        const props_value = document.createElement('td');
+        box.appendChild(_html('<h1>Relationship Set</h1>'));
+
+        box.appendChild(_html('<h2>Name</h2>'));
         const props_name_input = document.createElement('input');
         props_name_input.style.width = '100%';
         props_name_input.value = relationship_set['name'];
@@ -677,11 +682,7 @@ function erdv_init(erd) {
                 name: props_name_input.value
             });
         });
-        props_value.appendChild(props_name_input);
-        props_tr.appendChild(props_name);
-        props_tr.appendChild(props_value);
-        props_tab.appendChild(props_tr);
-        box.appendChild(props_tab);
+        box.appendChild(props_name_input);
 
         // Roles table
         const roles = _html('<div>\
@@ -690,8 +691,8 @@ function erdv_init(erd) {
 
         const roles_table = _html('<table class="role_table" cellspacing="2" border="1">\
                 <tr>\
+                    <th>Role</th>\
                     <th>Entity Set</th>\
-                    <th>R</th>\
                     <th>M</th>\
                     <th></th>\
                 </tr>\
@@ -708,8 +709,8 @@ function erdv_init(erd) {
 
             roles_table.appendChild(
                 _tr(
-                    _td(_text(r['entity_set_name'])),
                     _td(_text(r['role_name'])),
+                    _td(_text(r['entity_set_name'])),
                     _td(_text(r['role_multiplicity'])),
                     _td(remove_role_button)
                 )
@@ -745,14 +746,16 @@ function erdv_init(erd) {
         });
         roles_table.appendChild(
             _tr(
-                _td(role_entity_set),
                 _td(role_name),
+                _td(role_entity_set),
                 _td(role_multiplicity),
                 _td(role_button)
             )
         );
         roles.appendChild(roles_table);
         box.appendChild(roles);
+
+        box.appendChild(_create_relationship_set_attributes_section(relationship_set, erd))
 
         const button_container = _html('<div class="button-container"></div>')
         const remove_button = document.createElement('button')
@@ -763,6 +766,80 @@ function erdv_init(erd) {
         box.appendChild(button_container)
 
         return box;
+    }
+
+    /* Relationship Set attributes section */
+    function _create_relationship_set_attributes_section(relationship_set, erd)
+    {
+        const section = document.createElement('section');
+
+        section.appendChild(_html('<h2>Attributes</h2>'));
+
+        const attribute_tab = _html('<table class="relationship-attribute-tab">\
+                <tr><th>Name</th><th>Value Set</th><th></th></tr>\
+            </table>');
+
+        if (relationship_set['attributes'])
+        {
+            for (const v of relationship_set['attributes'])
+            {
+                const remove_button = document.createElement('button', {
+                    'type': 'button'
+                });
+                remove_button.innerText = '-';
+                remove_button.addEventListener('click', e => {
+                    erdv['on_relationship_set_attribute_remove'](relationship_set, v['name']);
+                });
+    
+                attribute_tab.appendChild(
+                    _tr(
+                        _td(_text(v['name'])),
+                        _td(_text(v['value_set'])),
+                        _td(remove_button)
+                    )
+                );
+            }
+        }
+
+        /* last row */
+        const attribute_name = document.createElement('input', {
+            'type': 'text'
+        });
+        attribute_name.style.width = '100%';
+
+
+        const attribute_value_set = document.createElement('select');
+        for (const e of erd['value_sets'])
+        {
+            const value = e['name']
+            const name = e['name'];
+            attribute_value_set.appendChild(
+                _html(`<option value="${value}">${name}</option>`)
+            );
+        }
+        attribute_value_set.style.width = '100%';
+
+        const attribute_add_button = document.createElement('button', {
+            'type': 'button'
+        });
+        attribute_add_button.innerText = '+';
+        attribute_add_button.addEventListener('click', e => {
+            erdv['on_relationship_set_attribute_add'](relationship_set, {
+                'name': attribute_name.value,
+                'value_set': attribute_value_set.value,
+            });
+        });
+        attribute_tab.appendChild(
+            _tr(
+                _td(attribute_name),
+                _td(attribute_value_set),
+                _td(attribute_add_button)
+            )
+        );
+
+        section.appendChild(attribute_tab);
+        
+        return section;
     }
 
     function _tr(...children)

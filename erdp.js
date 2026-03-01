@@ -209,6 +209,20 @@ function erdp_create(erd, erdv)
         update();
     }
 
+    erdv['on_relationship_set_attribute_add'] = function(relationship_set, attr)
+    {
+        erd_relationship_set_add_attribute(erd, relationship_set, attr['name'], attr['value_set']);
+
+        update_property_box();
+    }
+
+    erdv['on_relationship_set_attribute_remove'] = function(relationship_set, attr_name)
+    {
+        erd_relationship_set_remove_attribute(erd, relationship_set, attr_name);
+
+        update_property_box();
+    }
+
     erdv['on_entity_set_attribute_add'] = function(entity_set, attr)
     {
         erd_entity_set_add_attribute(erd, entity_set, attr['name'], attr['value_set']);
@@ -350,7 +364,8 @@ function erdp_create(erd, erdv)
         {
             erdv['show_relationship_set_properties'](
                 to_relationship_set_view(obj),
-                erd['entity_sets']);
+                erd['entity_sets'],
+                erd);
         }
     }
 

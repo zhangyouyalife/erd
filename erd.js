@@ -89,6 +89,7 @@ function erd_create_relationship_set(erd, x, y)
         "name": "Relationship",
         "type": "relationship_set",
         'roles': [],
+        "attributes": [],
     };
 
     erd["relationship_sets"].push(r);
@@ -646,6 +647,33 @@ function erd_elationship_set_remove_role(erd, relationship_set, role)
     erd_layout_role_connection_lines(erd);
 }
 
+function erd_relationship_set_add_attribute(erd, r, attr, value_set)
+{
+    const relationship_set = get_relationship_set_by_name(erd, r['name']);
+    
+    console.log('erd_relationship_set_add_attribute', relationship_set['attributes'], !relationship_set['attributes']);
+
+    if (!relationship_set['attributes']) {
+        relationship_set['attributes'] = []
+    }
+
+    relationship_set['attributes'].push({
+        'name': attr,
+        'value_set': value_set,
+    });
+}
+
+function erd_relationship_set_remove_attribute(erd, relationship_set, attr_name)
+{
+    for (let i = 0; i < relationship_set["attributes"].length; i++) {
+        const e = relationship_set["attributes"][i];
+        if (e['name'] == attr_name)
+        {
+            relationship_set["attributes"].splice(i, 1)
+            break;
+        }
+    }
+}
 
 function get_relationship_set_by_name(erd, name)
 {
