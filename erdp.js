@@ -204,7 +204,7 @@ function erdp_create(erd, erdv)
         const relationship_set = erd_get_relationship_set_by_id(erd, relationship_set_view['id']);
         const role = erd_get_relationship_set_role_by_id(erd, relationship_set, role_view['id']);
 
-        erd_elationship_set_remove_role(erd, relationship_set, role);
+        erd_relationship_set_remove_role(erd, relationship_set, role);
 
         update();
     }

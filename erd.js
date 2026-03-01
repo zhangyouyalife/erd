@@ -232,7 +232,6 @@ function _erd_get_related_entity_sets_of(erd, relationship_set, excludes = [])
             .filter(e => related_entity_set_id_list.includes(e['id']));
 }
 
-
 function erd_layout_role_connection_lines(erd)
 {
     /* trade off code readability with performance 
@@ -636,7 +635,7 @@ function erd_relationship_set_add_role(erd, relationship_set, entity_set, role_n
     erd_layout_role_connection_lines(erd);
 }
 
-function erd_elationship_set_remove_role(erd, relationship_set, role)
+function erd_relationship_set_remove_role(erd, relationship_set, role)
 {
     let idx = relationship_set['roles'].indexOf(role);
     if (idx != -1)
@@ -650,7 +649,7 @@ function erd_elationship_set_remove_role(erd, relationship_set, role)
 function erd_relationship_set_add_attribute(erd, r, attr, value_set)
 {
     const relationship_set = get_relationship_set_by_name(erd, r['name']);
-    
+
     console.log('erd_relationship_set_add_attribute', relationship_set['attributes'], !relationship_set['attributes']);
 
     if (!relationship_set['attributes']) {
