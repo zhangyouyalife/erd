@@ -847,3 +847,23 @@ function erd_remove_relationship_set(erd, relationship_set)
         }
     }
 }
+
+function erd_upgrade_format(erd)
+{
+    if (!erd['value_sets'])
+    {
+        erd['value_sets'] = [];
+    }
+
+    for (const e of erd['entity_sets']) {
+        if (!e['attributes']) {
+            e['attributes'] = [];
+        }
+    }
+
+    for (const e of erd['relationship_sets']) {
+        if (!e['attributes']) {
+            e['attributes'] = [];
+        }
+    }
+}

@@ -274,6 +274,8 @@ function erdp_create(erd, erdv)
 
         erd = JSON.parse(await (await file_handle.getFile()).text());
 
+        erd_upgrade_format(erd);
+        
         erd_layout_role_connection_lines(erd)
 
         console.log('onload: ', erd);
