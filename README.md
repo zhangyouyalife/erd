@@ -1,4 +1,4 @@
 # erd
 A Entity Relationship Diagram drawing tool.
 
-Demo: [https://zyunx.github.io/erd/](https://zyunx.github.io/erd/)
+Demo: [https://erd.zhang.youya.life/](https://erd.zhang.youya.life/)
